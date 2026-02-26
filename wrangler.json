@@ -1,0 +1,16 @@
+{
+	"compatibility_date": "2025-10-08",
+	"main": "src/index.ts",
+	"name": "redline-typing",
+	"upload_source_maps": true,
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_id": "7e1fcc4a-3435-485d-9073-9e5d85d35b29",
+			"database_name": "redline_db"
+		}
+	],
+	"observability": {
+		"enabled": true
+	}
+}
