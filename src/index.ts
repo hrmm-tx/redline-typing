@@ -11,7 +11,6 @@ export default {
     try {
       if (request.method === "OPTIONS") return new Response(null, { headers: resHeaders });
 
-      // --- AUTH SYSTEM ---
       if (url.pathname === "/auth/send-otp" && request.method === "POST") {
         const { email } = await request.json() as any;
         const code = Math.floor(100000 + Math.random() * 900000).toString();
@@ -29,10 +28,9 @@ export default {
         return new Response(JSON.stringify({ success: true }), { headers: resHeaders });
       }
 
-      // --- WORD ENGINE ---
       if (url.pathname === "/api/words") {
-        const words = ["turbo", "redline", "nitrous", "clutch", "ignition", "gearbox", "exhaust", "manifold", "piston", "velocity"];
-        const list = Array.from({length: 30}, () => words[Math.floor(Math.random()*words.length)]);
+        const words = ["turbo", "redline", "nitrous", "clutch", "ignition", "gearbox", "exhaust", "manifold", "piston", "velocity", "downshift", "supercharge", "octane", "apex", "drafting"];
+        const list = Array.from({length: 40}, () => words[Math.floor(Math.random()*words.length)]);
         return new Response(JSON.stringify(list), { headers: resHeaders });
       }
 
