@@ -10,23 +10,34 @@ export default {
 
     if (request.method === "OPTIONS") return new Response(null, { headers: resHeaders });
 
-    // New Dynamic Word Logic: 4 Tiers
     if (url.pathname === "/api/words") {
-      const difficulty = url.searchParams.get("level") || "mid";
-      const wordBank = {
-        easy: ["the", "at", "it", "is", "on", "go", "car", "run", "fast", "top"],
-        mid: ["engine", "piston", "clutch", "driver", "torque", "racing", "vector", "octane"],
-        hard: ["acceleration", "supercharger", "transmission", "aerodynamic", "suspension"],
-        extreme: ["synchronization", "thermodynamics", "interconnectivity", "hydroplaning"]
+      const level = url.searchParams.get("level") || "mid";
+      const lang = url.searchParams.get("lang") || "english";
+      
+      const banks = {
+        english: {
+          easy: ["the", "dog", "ran", "fast", "blue", "car", "sky", "is", "big", "home"],
+          mid: ["driver", "engine", "piston", "clutch", "torque", "racing", "octane", "street"],
+          hard: ["acceleration", "supercharger", "aerodynamics", "transmission", "suspension"],
+          extreme: ["thermodynamics", "synchronization", "hydroplaning", "interconnectivity"]
+        },
+        spanish: {
+          easy: ["el", "perro", "corre", "azul", "casa", "sol", "gran", "esta", "va", "luz"],
+          mid: ["motor", "piston", "embrague", "piloto", "torque", "carrera", "octanaje", "calle"]
+        }
       };
 
-      const selectedBank = wordBank[difficulty as keyof typeof wordBank] || wordBank.mid;
-      const list = Array.from({ length: 100 }, () => selectedBank[Math.floor(Math.random() * selectedBank.length)]);
+      const selected = banks[lang as keyof typeof banks] || banks.english;
+      const bank = selected[level as keyof typeof selected] || selected.mid;
       
+      // Logic to build "Natural" pseudo-sentences
+      const list = [];
+      for(let i=0; i<150; i++) {
+          list.push(bank[Math.floor(Math.random() * bank.length)]);
+      }
       return new Response(JSON.stringify(list), { headers: resHeaders });
     }
-
-    // AUTH logic remains the same as previous stable version...
-    return new Response("Engine Active", { status: 200 });
+    
+    return new Response("Redline Core Online", { status: 200 });
   }
 }
