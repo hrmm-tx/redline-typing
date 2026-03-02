@@ -1,40 +1,128 @@
 export default {
-  async fetch(request: Request, env: any) {
-    const url = new URL(request.url);
-    const resHeaders = {
-      "Content-Type": "application/json",
+  async fetch(request: Request): Promise<Response> {
+    const corsHeaders = {
       "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Methods": "GET, HEAD, POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
+      "Content-Type": "application/json",
     };
 
-    if (request.method === "OPTIONS") return new Response(null, { headers: resHeaders });
-
-    if (url.pathname === "/api/words") {
-      const level = url.searchParams.get("level") || "mid";
-      const banks = {
-        easy: ["the", "car", "fast", "road", "race", "blue", "red", "gear", "lap", "win", "top", "gas", "oil", "rim", "hub", "fan", "sun", "hot", "cool", "day", "night"],
-        mid: ["engine", "piston", "clutch", "torque", "octane", "exhaust", "nitrous", "turbo", "drift", "shift", "boost", "brake", "valve", "intake", "gauge", "spark"],
-        hard: ["acceleration", "supercharger", "aerodynamics", "transmission", "suspension", "velocity", "manifold", "differential", "crankshaft", "alternator", "ignition"],
-        extreme: ["thermodynamics", "synchronization", "hydroplaning", "interconnectivity", "electrification", "deceleration", "miniaturization", "standardization"]
-      };
-
-      const b = banks[level as keyof typeof banks] || banks.mid;
-      const templates = [
-        "The $1 is moving very $1 through the $1.",
-        "Check the $1 before you start the $1.",
-        "A professional $1 will tune the $1 for the $1.",
-        "Speed is $1 but control of the $1 is the key."
-      ];
-
-      let stream = [];
-      for(let i=0; i<60; i++) {
-        let temp = templates[Math.floor(Math.random() * templates.length)];
-        let sentence = temp.replace(/\$1/g, () => b[Math.floor(Math.random() * b.length)]);
-        stream.push(...sentence.split(" "));
-      }
-      return new Response(JSON.stringify(stream), { headers: resHeaders });
+    // Handle CORS preflight
+    if (request.method === "OPTIONS") {
+      return new Response(null, { headers: corsHeaders });
     }
-    return new Response("Engine Active", { status: 200 });
-  }
-}
+
+    // A bank of 100 professional, grammatically correct prompts
+    // These are balanced for a smooth typing flow
+    const sentenceBank = [
+      "The quick brown fox jumps over the lazy dog.",
+      "Success is not final failure is not fatal.",
+      "The only way to do great work is to love what you do.",
+      "Innovation distinguishes between a leader and a follower.",
+      "Your time is limited so do not waste it living someone else life.",
+      "Everything you have ever wanted is on the other side of fear.",
+      "The best way to predict the future is to create it.",
+      "Believe you can and you are halfway there.",
+      "Action is the foundational key to all success.",
+      "Stay hungry stay foolish and keep moving forward.",
+      "Courage is grace under pressure.",
+      "Simplicity is the ultimate sophistication.",
+      "In the middle of every difficulty lies opportunity.",
+      "It does not matter how slowly you go as long as you do not stop.",
+      "The power of imagination makes us infinite.",
+      "Hardships often prepare ordinary people for an extraordinary destiny.",
+      "The secret of getting ahead is getting started.",
+      "Keep your face always toward the sunshine and shadows will fall behind you.",
+      "Work hard in silence let your success be your noise.",
+      "The future belongs to those who believe in their dreams.",
+      "Dream big and dare to fail.",
+      "Quality is not an act it is a habit.",
+      "It is always the simple that produces the marvelous.",
+      "Wisdom begins in wonder.",
+      "Do not wait the time will never be just right.",
+      "A journey of a thousand miles begins with a single step.",
+      "What we think we become.",
+      "Happiness depends upon ourselves.",
+      "Turn your wounds into wisdom.",
+      "Change the world by being yourself.",
+      "Never regret anything that made you smile.",
+      "Die with memories not dreams.",
+      "Aspire to inspire before we expire.",
+      "Everything you can imagine is real.",
+      "Whatever you are be a good one.",
+      "The meaning of life is to give life meaning.",
+      "Normal is an illusion what is normal for the spider is chaos for the fly.",
+      "Tough times never last but tough people do.",
+      "Be so good they can not ignore you.",
+      "Yesterday you said tomorrow just do it.",
+      "Life is short and it is up to you to make it sweet.",
+      "If you tell the truth you do not have to remember anything.",
+      "Every moment is a fresh beginning.",
+      "The grass is greener where you water it.",
+      "Focus on the journey not the destination.",
+      "Small steps in the right direction can turn out to be the biggest steps of your life.",
+      "The goal is not to be better than the other man but your previous self.",
+      "Great things never come from comfort zones.",
+      "One day or day one you decide.",
+      "Do something today that your future self will thank you for.",
+      "Don't stop until you're proud.",
+      "Push yourself because no one else is going to do it for you.",
+      "Success doesn't just find you you have to go out and get it.",
+      "The harder you work for something the greater you'll feel when you achieve it.",
+      "Dream it wish it do it.",
+      "Success starts with self discipline.",
+      "Be your own hero.",
+      "Keep going you are getting there.",
+      "Don't quit your day dream.",
+      "Failure is the opportunity to begin again more intelligently.",
+      "Our lives are defined by opportunities even the ones we miss.",
+      "The only limit to our realization of tomorrow will be our doubts of today.",
+      "The way to get started is to quit talking and begin doing.",
+      "If life were predictable it would cease to be life and be without flavor.",
+      "Life is a long lesson in humility.",
+      "Spread love everywhere you go let no one ever come to you without leaving happier.",
+      "Tell me and I forget teach me and I remember involve me and I learn.",
+      "It is during our darkest moments that we must focus to see the light.",
+      "Whoever is happy will make others happy too.",
+      "Do not go where the path may lead go instead where there is no path and leave a trail.",
+      "You will face many defeats in life but never let yourself be defeated.",
+      "Life is either a daring adventure or nothing at all.",
+      "Many of life's failures are people who did not realize how close they were to success.",
+      "You have brains in your head and feet in your shoes you can steer yourself any direction.",
+      "Life is what happens when you're making other plans.",
+      "Get busy living or get busy dying.",
+      "You only live once but if you do it right once is enough.",
+      "Never let the fear of striking out keep you from playing the game.",
+      "Money and success don't change people they merely amplify what is already there.",
+      "Your time is limited so don't waste it living someone else's life.",
+      "Not how long but how well you have lived is the main thing.",
+      "If life were predictable it would cease to be life.",
+      "The whole secret of a successful life is to find out what is one's destiny to do and then do it.",
+      "In order to write about life first you must live it.",
+      "The big lesson in life is never be scared of anyone or anything.",
+      "Sing like no one's listening love like you've never been hurt and live like it's heaven on earth.",
+      "Everything negative pressure and challenges is all an opportunity for me to rise.",
+      "Life is like riding a bicycle to keep your balance you must keep moving.",
+      "Life is a succession of lessons which must be lived to be understood.",
+      "You're never too old to set another goal or to dream a new dream.",
+      "The unexamined life is not worth living.",
+      "The best way out is always through.",
+      "Everything has beauty but not everyone sees it.",
+      "A life lived in fear is a life half lived.",
+      "Believe in yourself and the world will believe in you.",
+      "Do what you can with what you have where you are.",
+      "Be the change that you wish to see in the world.",
+      "It is never too late to be what you might have been.",
+      "Mistakes are proof that you are trying.",
+      "Keep moving forward."
+    ];
+
+    // Select 100 random samples from the bank to send to the frontend
+    const shuffled = sentenceBank.sort(() => 0.5 - Math.random());
+    const selected = shuffled.slice(0, 100);
+
+    return new Response(JSON.stringify(selected), {
+      headers: corsHeaders,
+    });
+  },
+};
