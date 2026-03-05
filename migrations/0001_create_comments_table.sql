@@ -1,14 +1,15 @@
--- Migration number: 0001 	 2024-12-27T22:04:18.794Z
-CREATE TABLE IF NOT EXISTS comments (
-    id INTEGER PRIMARY KEY NOT NULL,
-    author TEXT NOT NULL,
-    content TEXT NOT NULL
+-- Redline Performance Schema
+CREATE TABLE IF NOT EXISTS results (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    wpm REAL NOT NULL,
+    accuracy REAL NOT NULL,
+    raw_wpm REAL NOT NULL,
+    characters INTEGER NOT NULL,
+    difficulty TEXT NOT NULL,
+    mode TEXT NOT NULL,
+    created_at INTEGER NOT NULL
 );
 
--- Insert some sample data into our comments table.
-INSERT INTO comments (author, content)
-VALUES
-    ('Kristian', 'Congrats!'),
-    ('Serena', 'Great job!'),
-    ('Max', 'Keep up the good work!')
-;
+-- Seed initial record for system calibration
+INSERT INTO results (wpm, accuracy, raw_wpm, characters, difficulty, mode, created_at)
+VALUES (0, 100, 0, 0, 'easy', 'time', 1700000000000);
