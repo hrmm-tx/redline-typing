@@ -1,0 +1,12 @@
+-- Migration number: 0001 	 2024-12-27T22:04:18.794Z
+CREATE TABLE IF NOT EXISTS results (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    wpm INTEGER NOT NULL,
+    accuracy INTEGER NOT NULL,
+    raw_wpm INTEGER NOT NULL,
+    characters INTEGER NOT NULL,
+    difficulty TEXT NOT NULL,
+    mode TEXT NOT NULL,
+    language TEXT NOT NULL DEFAULT 'english',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
