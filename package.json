@@ -11,8 +11,8 @@
     "migrations:local": "wrangler d1 migrations apply DB --local"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20251217.0",
+    "@cloudflare/workers-types": "^4.20241218.0",
     "typescript": "^5.0.0",
-    "wrangler": "^3.57.1"
+    "wrangler": "^3.114.17"
   }
 }
